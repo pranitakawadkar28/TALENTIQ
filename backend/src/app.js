@@ -1,9 +1,25 @@
 import express from "express"
+import path from "path"
+import {ENV} from './lib/env.js'
 
 const app = express()
 
-app.get("/", (req, res) => {
-    res.send("Hello world")
+const __dirname = path.resolve()
+
+app.get("/health", (req, res) => {
+    res.status(200).json({ msg: "api is up djgsjhsjhning"})
 })
+
+app.get("/about", (req, res) => {
+    res.status(200).json({ msg: "api is up and running"})
+})
+
+if(ENV.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+    app.get("/{*any}", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"))
+})
+}
 
 export default app;
